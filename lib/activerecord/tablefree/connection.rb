@@ -55,8 +55,8 @@ module ActiveRecord::Tablefree
       ''
     end
 
-    def lookup_cast_type_from_column(*_args)
-      @_cast_type ||= ActiveRecord::Tablefree::CastType.new
+    def lookup_cast_type_from_column(column)
+      @_cast_type = lookup_cast_type(column.type)
     end
 
     def current_transaction

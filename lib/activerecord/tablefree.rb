@@ -92,9 +92,24 @@ module ActiveRecord
                      else
                        "ActiveRecord::Type::#{sql_type.to_s.camelize}".constantize rescue nil
                      end
-        raise InvalidColumnType, "sql_type is #{sql_type} (#{sql_type.class}), which is not supported" unless cast_class.respond_to?(:new)
+        unless cast_class.respond_to?(:new)
+          raise InvalidColumnType, "sql_type is #{sql_type} (#{sql_type.class}), which is not supported"
+        end
+
         cast_type = cast_class.new(*cast_class_params)
-        tablefree_options[:columns_hash][name.to_s] = ActiveRecord::ConnectionAdapters::Column.new(name.to_s, default, cast_type, null)
+        sql_type_metadata = ActiveRecord::ConnectionAdapters::SqlTypeMetadata.new(
+          sql_type: cast_type.type.to_s,
+          type: cast_type.type,
+          limit: cast_type.limit,
+          precision: cast_type.precision,
+          scale: cast_type.scale
+        )
+        tablefree_options[:columns_hash][name.to_s] = ActiveRecord::ConnectionAdapters::Column.new(
+          name.to_s,
+          default,
+          sql_type_metadata,
+          null
+        )
       end
 
       # Register a set of columns with the same SQL type
@@ -123,7 +138,7 @@ module ActiveRecord
       end
 
       case ActiveRecord::VERSION::MAJOR
-      when 5, 6
+      when 5, 6, 7
         def find_by_sql(*_args)
           case tablefree_options[:database]
           when :pretend_success

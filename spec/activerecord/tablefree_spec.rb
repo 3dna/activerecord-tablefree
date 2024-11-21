@@ -50,7 +50,7 @@ shared_examples_for 'an active record instance' do
   it { should respond_to :id= }
   it { should respond_to :name }
   it { should respond_to :name= }
-  it { should respond_to :update_attributes }
+  it { should respond_to :update }
   describe '#attributes=' do
     before(:example) { subject.attributes = ({ name: 'Jarl Friis' }) }
     it 'assign attributes' do
@@ -99,25 +99,6 @@ shared_examples_for 'a nested active record' do
 end
 
 shared_examples_for 'a tablefree model with fail_fast' do
-  case ActiveRecord::VERSION::MAJOR
-  when 3
-    describe '#all' do
-      it 'raises ActiveRecord::Tablefree::NoDatabase' do
-        expect { subject.all }.to raise_exception(ActiveRecord::Tablefree::NoDatabase)
-      end
-    end
-  when 4
-    describe '#all' do
-      it 'raises ActiveRecord::Tablefree::NoDatabase' do
-        expect { subject.all }.to_not raise_exception
-      end
-    end
-    describe '#all[]' do
-      it 'raises ActiveRecord::Tablefree::NoDatabase' do
-        expect { subject.all[0] }.to raise_exception(ActiveRecord::Tablefree::NoDatabase)
-      end
-    end
-  end
   describe '#create' do
     it 'raises ActiveRecord::Tablefree::NoDatabase' do
       expect { subject.create(name: 'Jarl') }.to raise_exception(ActiveRecord::Tablefree::NoDatabase)
@@ -152,9 +133,9 @@ shared_examples_for 'a tablefree model instance with fail_fast' do
       expect { subject.reload }.to raise_exception(ActiveRecord::Tablefree::NoDatabase)
     end
   end
-  describe '#update_attributes' do
+  describe '#update' do
     it 'raises ActiveRecord::Tablefree::NoDatabase' do
-      expect { subject.update_attributes(name: 'Jarl') }.to raise_exception(StandardError)
+      expect { subject.update(name: 'Jarl') }.to raise_exception(StandardError)
     end
   end
 end
@@ -193,10 +174,10 @@ describe 'Tablefree nested with fail_fast' do
     subject { Chair.new(name: 'Jarl') }
     it_behaves_like 'a tablefree model instance with fail_fast'
     it_behaves_like 'a nested active record'
-    describe '#update_attributes' do
+    describe '#update' do
       it 'raises ActiveRecord::Tablefree::NoDatabase' do
         expect do
-          subject.update_attributes(arm_rests: { name: 'nice arm_rest' })
+          subject.update(arm_rests: { name: 'nice arm_rest' })
         end.to raise_exception(StandardError)
       end
     end
@@ -256,8 +237,8 @@ shared_examples_for 'an instance with succeeding database' do
     before { subject.save! }
     specify { expect(subject.reload).to eq subject }
   end
-  describe '#update_attributes' do
-    specify { expect(subject.update_attributes(name: 'Jarl Friis')).to eq true }
+  describe '#update' do
+    specify { expect(subject.update(name: 'Jarl Friis')).to eq true }
   end
 end
 
@@ -273,7 +254,7 @@ describe 'ActiveRecord with real database' do
   end
   after(:context) do
     remove_models
-    ActiveRecord::Base.clear_all_connections!
+    ActiveRecord::Base.connection_handler.clear_all_connections!
   end
 
   subject { Chair }

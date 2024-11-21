@@ -25,13 +25,13 @@ Gem::Specification.new do |gem|
 
   gem.add_runtime_dependency('activerecord', '>= 6.0.0')
 
-  gem.add_development_dependency('bundler', '~> 1')
-  gem.add_development_dependency('rake', '~> 12', '> 0')
+  gem.add_development_dependency('bundler', '~> 2')
+  gem.add_development_dependency('rake', '~> 13', '> 0')
 
   #  gem.add_development_dependency("rails") # This is in the appraisal gemfiles
   gem.add_development_dependency('sqlite3', '~> 1')
 
-  gem.add_development_dependency('appraisal', '~> 1')
+  gem.add_development_dependency('appraisal', '~> 2')
   gem.add_development_dependency('aruba', '~> 0')
   gem.add_development_dependency('cucumber', '~> 3')
   gem.add_development_dependency('rspec', '~> 3')
@@ -42,7 +42,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency('gem-release', '~> 2')
   gem.add_development_dependency('listen', '~> 3')
   gem.add_development_dependency('nokogiri', '~> 1.0')
-  gem.add_development_dependency('rails', '~> 6')
+  gem.add_development_dependency('rails', '~> 7.0')
   gem.add_development_dependency('wwtd', '~> 1')
 
   #  gem.add_development_dependency('launchy', '~> 2.1')
