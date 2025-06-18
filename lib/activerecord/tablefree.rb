@@ -138,7 +138,7 @@ module ActiveRecord
       end
 
       case ActiveRecord::VERSION::MAJOR
-      when 5, 6, 7
+      when 5, 6, 7, 8
         def find_by_sql(*_args)
           case tablefree_options[:database]
           when :pretend_success
