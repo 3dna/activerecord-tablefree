@@ -1,16 +1,14 @@
 module ActiveRecord::Tablefree
   class Connection < ActiveRecord::ConnectionAdapters::AbstractAdapter
     def initialize
+      super(ActiveRecord::Base, nil, nil, { adapter: "tablefree" })
       @connection          = Object.new # The Raw Connection
       @owner               = nil
       @instrumenter        = ActiveSupport::Notifications.instrumenter
       @logger              = Object.new
       @config              = Object.new
-      @pool                = nil
       @schema_cache        = ActiveRecord::Tablefree::SchemaCache.new
       @quoted_column_names, @quoted_table_names = {}, {}
-      @visitor = Object.new
-      @lock = Object.new
       @prepared_statements = false
     end
 
@@ -70,6 +68,10 @@ module ActiveRecord::Tablefree
     # This is used in the StatementCache object.
     def cacheable_query(arel) # :nodoc:
       ActiveRecord::Tablefree::StatementCache.partial_query visitor, arel.ast, collector
+    end
+
+    def internal_exec_query(sql, name = "SQL", binds = [], prepare: false, async: false, allow_retry: false) # :nodoc:
+      []
     end
   end
 end
