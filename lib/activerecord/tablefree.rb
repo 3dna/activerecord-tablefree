@@ -104,12 +104,23 @@ module ActiveRecord
           precision: cast_type.precision,
           scale: cast_type.scale
         )
-        tablefree_options[:columns_hash][name.to_s] = ActiveRecord::ConnectionAdapters::Column.new(
-          name.to_s,
-          default,
-          sql_type_metadata,
-          null
-        )
+        tablefree_options[:columns_hash][name.to_s] = if ActiveRecord.version >= Gem::Version.new('8.1')
+          # Rails 8.1 added a required `cast_type` positional param between `name` and `default`.
+          ActiveRecord::ConnectionAdapters::Column.new(
+            name.to_s,
+            cast_type,
+            default,
+            sql_type_metadata,
+            null
+          )
+        else
+          ActiveRecord::ConnectionAdapters::Column.new(
+            name.to_s,
+            default,
+            sql_type_metadata,
+            null
+          )
+        end
       end
 
       # Register a set of columns with the same SQL type
