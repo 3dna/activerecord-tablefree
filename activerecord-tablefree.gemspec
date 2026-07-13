@@ -8,9 +8,9 @@ Gem::Specification.new do |gem|
   gem.name          = 'activerecord-tablefree'
   gem.version       = ActiveRecord::Tablefree::VERSION
   gem.platform      = Gem::Platform::RUBY
-  gem.authors       = ['Jarl Friis', 'Kenneth Kalmer', 'Michal Zima', 'Peter Boling']
-  gem.email         = ['jarl@softace.dk', 'peter.boling@gmail.com']
-  gem.homepage      = 'https://github.com/boltthreads/activerecord-tablefree'
+  gem.authors       = ['3dna, Corp.']
+  gem.email         = ['engineering@nationbulder.com']
+  gem.homepage      = 'https://github.com/3dna/activerecord-tablefree'
   gem.summary       = 'A library for implementing tablefree ActiveRecord models in Rails 5+'
   gem.description   = 'ActiveRecord Tablefree Models provides a simple mixin for creating models that are not bound to the database. This approach is useful for taking advantage of the features of ActiveRecord such as validation, relationships, nested_attributes, etc.'
   gem.license       = 'MIT'
