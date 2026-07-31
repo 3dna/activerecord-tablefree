@@ -8,9 +8,9 @@ Gem::Specification.new do |gem|
   gem.name          = 'activerecord-tablefree'
   gem.version       = ActiveRecord::Tablefree::VERSION
   gem.platform      = Gem::Platform::RUBY
-  gem.authors       = ['Jarl Friis', 'Kenneth Kalmer', 'Michal Zima', 'Peter Boling']
-  gem.email         = ['jarl@softace.dk', 'peter.boling@gmail.com']
-  gem.homepage      = 'https://github.com/boltthreads/activerecord-tablefree'
+  gem.authors       = ['3dna, Corp.']
+  gem.email         = ['engineering@nationbulder.com']
+  gem.homepage      = 'https://github.com/3dna/activerecord-tablefree'
   gem.summary       = 'A library for implementing tablefree ActiveRecord models in Rails 5+'
   gem.description   = 'ActiveRecord Tablefree Models provides a simple mixin for creating models that are not bound to the database. This approach is useful for taking advantage of the features of ActiveRecord such as validation, relationships, nested_attributes, etc.'
   gem.license       = 'MIT'
@@ -29,7 +29,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency('rake', '~> 13', '> 0')
 
   #  gem.add_development_dependency("rails") # This is in the appraisal gemfiles
-  gem.add_development_dependency('sqlite3', '~> 1')
+  gem.add_development_dependency('sqlite3', '~> 2.1')
 
   gem.add_development_dependency('appraisal', '~> 2')
   gem.add_development_dependency('aruba', '~> 0')
@@ -42,7 +42,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency('gem-release', '~> 2')
   gem.add_development_dependency('listen', '~> 3')
   gem.add_development_dependency('nokogiri', '~> 1.0')
-  gem.add_development_dependency('rails', '~> 7.0')
+  gem.add_development_dependency('rails', '~> 8.0.0')
   gem.add_development_dependency('wwtd', '~> 1')
 
   #  gem.add_development_dependency('launchy', '~> 2.1')
