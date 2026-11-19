@@ -1,5 +1,10 @@
 #-*- ruby -*-
-appraise 'rails70' do
-  gem 'rails', '~> 7.0'
+appraise 'rails_8_0' do
+  gem 'rails', '~> 8.0.0'
+  gem 'jquery-rails'
+end
+
+appraise 'rails_8_1' do
+  gem 'rails', '~> 8.1.0'
   gem 'jquery-rails'
 end

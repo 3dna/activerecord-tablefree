@@ -1,17 +1,30 @@
+require 'delegate'
+
 module ActiveRecord::Tablefree
   class Connection < ActiveRecord::ConnectionAdapters::AbstractAdapter
+    # AbstractAdapter defaults @pool to a real ActiveRecord::ConnectionAdapters::NullPool
+    # since we never attach a real connection pool. Rails 8.1 added
+    # #with_pool_transaction_isolation_level to the transaction path (see
+    # ActiveRecord::Transactions#with_transaction_returning_status), but NullPool itself
+    # doesn't implement it, so any #save/#create raises NoMethodError instead of our
+    # NoDatabase/pretend_success behavior. Wrap it so it just yields.
+    class NullPoolWithIsolationLevel < SimpleDelegator
+      def with_pool_transaction_isolation_level(*)
+        yield
+      end
+    end
+
     def initialize
+      super(ActiveRecord::Base, nil, nil, { adapter: "tablefree" })
       @connection          = Object.new # The Raw Connection
       @owner               = nil
       @instrumenter        = ActiveSupport::Notifications.instrumenter
       @logger              = Object.new
       @config              = Object.new
-      @pool                = nil
       @schema_cache        = ActiveRecord::Tablefree::SchemaCache.new
       @quoted_column_names, @quoted_table_names = {}, {}
-      @visitor = Object.new
-      @lock = Object.new
       @prepared_statements = false
+      @pool = NullPoolWithIsolationLevel.new(@pool) unless @pool.respond_to?(:with_pool_transaction_isolation_level)
     end
 
     def quote_table_name(*_args)
@@ -70,6 +83,10 @@ module ActiveRecord::Tablefree
     # This is used in the StatementCache object.
     def cacheable_query(arel) # :nodoc:
       ActiveRecord::Tablefree::StatementCache.partial_query visitor, arel.ast, collector
+    end
+
+    def internal_exec_query(sql, name = "SQL", binds = [], prepare: false, async: false, allow_retry: false) # :nodoc:
+      []
     end
   end
 end

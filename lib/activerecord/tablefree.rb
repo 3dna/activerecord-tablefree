@@ -104,12 +104,23 @@ module ActiveRecord
           precision: cast_type.precision,
           scale: cast_type.scale
         )
-        tablefree_options[:columns_hash][name.to_s] = ActiveRecord::ConnectionAdapters::Column.new(
-          name.to_s,
-          default,
-          sql_type_metadata,
-          null
-        )
+        tablefree_options[:columns_hash][name.to_s] = if ActiveRecord.version >= Gem::Version.new('8.1')
+          # Rails 8.1 added a required `cast_type` positional param between `name` and `default`.
+          ActiveRecord::ConnectionAdapters::Column.new(
+            name.to_s,
+            cast_type,
+            default,
+            sql_type_metadata,
+            null
+          )
+        else
+          ActiveRecord::ConnectionAdapters::Column.new(
+            name.to_s,
+            default,
+            sql_type_metadata,
+            null
+          )
+        end
       end
 
       # Register a set of columns with the same SQL type
@@ -138,7 +149,7 @@ module ActiveRecord
       end
 
       case ActiveRecord::VERSION::MAJOR
-      when 5, 6, 7
+      when 5, 6, 7, 8
         def find_by_sql(*_args)
           case tablefree_options[:database]
           when :pretend_success
@@ -152,13 +163,8 @@ module ActiveRecord
       end
 
       def transaction
-        #        case tablefree_options[:database]
-        #        when :pretend_success
         @_current_transaction_records ||= []
         yield
-        #        when :fail_fast
-        #          raise NoDatabase.new("Can't #transaction on Tablefree class")
-        #        end
       end
 
       def tablefree?
@@ -167,6 +173,21 @@ module ActiveRecord
 
       def table_exists?
         false
+      end
+
+      def data_source_exists?
+        false
+      end
+
+      def connection_pool
+        @connection_pool ||= Class.new do
+          def with_connection(*args)
+            yield ActiveRecord::Tablefree::Connection.new
+          end
+          def connection
+            self
+          end
+        end.new
       end
     end
 
@@ -231,7 +252,8 @@ module ActiveRecord
         end
       end
 
-      def add_to_transaction; end
+      def add_to_transaction(ensure_finalize = true)
+      end
 
       private
 

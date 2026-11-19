@@ -19,3 +19,5 @@ tmp
 
 # rspec failure tracking
 .rspec_status
+
+.DS_STORE
